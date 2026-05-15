@@ -4,10 +4,10 @@ A general-purpose time-series statistics library for Arduino and embedded system
 
 The library provides two complementary classes:
 
-| Class | Purpose |
+|Class|Purpose|
 |---|---|
-| `RollingStats` | Sliding window statistics — last N minutes/hours of data |
-| `CumulativeStats` | Lifetime statistics — all data since startup, never discarded |
+|`RollingStats`|Sliding window statistics — last N minutes/hours of data|
+|`CumulativeStats`|Lifetime statistics — all data since startup, never discarded|
 
 Both classes are **hardware-independent**: no Arduino dependency, no dynamic memory allocation, no global state. The caller provides the timestamp.
 
@@ -15,7 +15,8 @@ Both classes are **hardware-independent**: no Arduino dependency, no dynamic mem
 
 ## Features
 
-**RollingStats**
+### RollingStats
+
 - Compile-time sized circular buffer — no heap allocation
 - Bin-based accumulation (samples averaged within each time bin)
 - Sliding window average, minimum, maximum, standard deviation
@@ -23,7 +24,8 @@ Both classes are **hardware-independent**: no Arduino dependency, no dynamic mem
 - Configurable fill-ratio guard (`hasValidWindow()`)
 - Query windows must be multiples of the bin resolution
 
-**CumulativeStats**
+### CumulativeStats
+
 - Lifetime average, min, max, standard deviation (never discards data)
 - Welford's online algorithm — numerically stable for long-running measurements
 - Dose accumulation: integrates rate × time for physical quantity totals (e.g. µSv)
@@ -37,20 +39,20 @@ Both classes are **hardware-independent**: no Arduino dependency, no dynamic mem
 No external dependencies. Only `<stdint.h>` and `<math.h>` are required —
 both are part of the C99 standard library, available on every platform.
 
-| Platform | Status | Notes |
+|Platform|Status|Notes|
 |---|---|---|
-| ESP8266 (NodeMCU, Wemos D1) | ✓ Tested | |
-| ESP32 | ✓ Tested | |
-| AVR (ATmega328P, ATmega2560) | ✓ Should work | Watch RAM — see below |
-| SAMD, STM32, RP2040 | ✓ Should work | No platform-specific code |
-| Desktop C++ (unit tests) | ✓ Tested | Timestamp from `std::chrono` |
+|ESP8266 (NodeMCU, Wemos D1)|✓ Tested||
+|ESP32|✓ Tested||
+|AVR (ATmega328P, ATmega2560)|✓ Should work|Watch RAM — see below|
+|SAMD, STM32, RP2040|✓ Should work|No platform-specific code|
+|Desktop C++ (unit tests)|✓ Tested|Timestamp from `std::chrono`|
 
 ### AVR memory considerations
 
 On AVR boards (Uno, Nano, Mega), RAM is the limiting factor. Each bin in
 `RollingStats` occupies 4 bytes (one `float`), plus a small fixed overhead.
 
-```
+```txt
 RollingStats<BINS, RESOLUTION_S>  →  BINS × 4 + ~20 bytes RAM
 ```
 
@@ -181,16 +183,16 @@ void loop() {
 RollingStats<BINS, RESOLUTION_S>
 ```
 
-| Parameter | Type | Description |
+|Parameter|Type|Description|
 |---|---|---|
-| `BINS` | `uint32_t` | Number of bins — **must be a power of 2** |
-| `RESOLUTION_S` | `uint32_t` | Bin width in seconds |
+|`BINS`|`uint32_t`|Number of bins — **must be a power of 2**|
+|`RESOLUTION_S`|`uint32_t`|Bin width in seconds|
 
 Maximum window: `BINS × RESOLUTION_S` seconds.
 
 ### Sizing guide
 
-```
+```cpp
 RollingStats<128,  60>  // 128 × 60s  = 7680s ≈ 2.1 hr  —  512 bytes RAM
 RollingStats<1440, 60>  // 1440 × 60s = 86400s = 24 hr  — 5760 bytes RAM
 RollingStats<256,  10>  // 256 × 10s  = 2560s  ≈ 43 min —  1024 bytes RAM
@@ -198,20 +200,20 @@ RollingStats<256,  10>  // 256 × 10s  = 2560s  ≈ 43 min —  1024 bytes RAM
 
 ### Methods
 
-| Method | Description |
+|Method|Description|
 |---|---|
-| `addSample(value, timeMs)` | Add a sample. Samples within the same bin are averaged. |
-| `average(windowSec)` | Mean over the last `windowSec` seconds. NaN if no data. |
-| `minimum(windowSec)` | Minimum over window. NaN if no data. |
-| `maximum(windowSec)` | Maximum over window. NaN if no data. |
-| `stdDev(windowSec)` | Population standard deviation. NaN if < 2 bins. |
-| `hasValidWindow(windowSec, minFill)` | True if window has at least `minFill` fraction of valid bins. |
-| `hasWindow(windowSec)` | True if window is fully filled (no gaps). |
-| `validSeconds(windowSec)` | Seconds of valid data within window. |
-| `filledBins()` | Total number of bins written since startup. |
-| `availableSeconds()` | Total seconds of history available. |
-| `maxWindowSeconds()` | Maximum queryable window (`BINS × RESOLUTION_S`). |
-| `reset()` | Clear all data. |
+|`addSample(value, timeMs)`|Add a sample. Samples within the same bin are averaged.|
+|`average(windowSec)`|Mean over the last `windowSec` seconds. NaN if no data.|
+|`minimum(windowSec)`|Minimum over window. NaN if no data.|
+|`maximum(windowSec)`|Maximum over window. NaN if no data.|
+|`stdDev(windowSec)`|Population standard deviation. NaN if < 2 bins.|
+|`hasValidWindow(windowSec, minFill)`|True if window has at least `minFill` fraction of valid bins.|
+|`hasWindow(windowSec)`|True if window is fully filled (no gaps).|
+|`validSeconds(windowSec)`|Seconds of valid data within window.|
+|`filledBins()`|Total number of bins written since startup.|
+|`availableSeconds()`|Total seconds of history available.|
+|`maxWindowSeconds()`|Maximum queryable window (`BINS × RESOLUTION_S`).|
+|`reset()`|Clear all data.|
 
 > **Note:** `windowSec` must be a non-zero multiple of `RESOLUTION_S` and ≤ `maxWindowSeconds()`. Pass `0` to query the full available history.
 
@@ -221,25 +223,25 @@ RollingStats<256,  10>  // 256 × 10s  = 2560s  ≈ 43 min —  1024 bytes RAM
 
 ### Methods
 
-| Method | Description |
+|Method|Description|
 |---|---|
-| `addSample(cpm, uSvH, timeMs)` | Add a sample. Updates all accumulators. |
-| `averageCpm()` | Lifetime average CPM. NaN if no samples. |
-| `sigmaCpm()` | Population standard deviation. NaN if < 2 samples. |
-| `minCpm()` | Minimum CPM observed. NaN if no samples. |
-| `maxCpm()` | Maximum CPM observed. NaN if no samples. |
-| `totalDoseUSv()` | Accumulated dose in µSv. |
-| `totalDoseMSv()` | Accumulated dose in mSv. |
-| `elapsedSeconds()` | Seconds since first sample. |
-| `sampleCount()` | Total number of samples added. |
-| `hasData(minSamples)` | True if at least `minSamples` have been added. |
-| `reset()` | Clear all accumulators. |
+|`addSample(cpm, uSvH, timeMs)`|Add a sample. Updates all accumulators.|
+|`averageCpm()`|Lifetime average CPM. NaN if no samples.|
+|`sigmaCpm()`|Population standard deviation. NaN if < 2 samples.|
+|`minCpm()`|Minimum CPM observed. NaN if no samples.|
+|`maxCpm()`|Maximum CPM observed. NaN if no samples.|
+|`totalDoseUSv()`|Accumulated dose in µSv.|
+|`totalDoseMSv()`|Accumulated dose in mSv.|
+|`elapsedSeconds()`|Seconds since first sample.|
+|`sampleCount()`|Total number of samples added.|
+|`hasData(minSamples)`|True if at least `minSamples` have been added.|
+|`reset()`|Clear all accumulators.|
 
 ### Dose integration
 
 Dose is integrated using rectangular (Euler forward) integration:
 
-```
+```txt
 dDose [µSv] = uSvH × Δt [h]
 ```
 
@@ -249,21 +251,20 @@ Gaps between `addSample()` calls are **not** integrated — no data means no dos
 
 ## Memory usage
 
-| Class | RAM | Notes |
+|Class|RAM|Notes|
 |---|---|---|
-| `RollingStats<128, 60>` | ~520 bytes | 128 × float bins + overhead |
-| `RollingStats<1440, 60>` | ~5780 bytes | 24-hour history at 1 min resolution |
-| `CumulativeStats` | ~48 bytes | Fixed, independent of run duration |
+|`RollingStats<128, 60>`|~520 bytes|128 × float bins + overhead|
+|`RollingStats<1440, 60>`|~5780 bytes|24-hour history at 1 min resolution|
+|`CumulativeStats`|~48 bytes|Fixed, independent of run duration|
 
 ---
 
 ## Example Sketches
 
-| Sketch | Description |
+|Sketch|Description|
 |---|---|
-| `TemperatureAverage` | Basic RollingStats usage with a temperature sensor |
-| `CumulativeStatsTest` | Validates CumulativeStats output against known reference values |
-
+|`TemperatureAverage`|Basic RollingStats usage with a temperature sensor|
+|`CumulativeStatsTest`|Validates CumulativeStats output against known reference values|
 
 ---
 
