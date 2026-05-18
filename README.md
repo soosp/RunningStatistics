@@ -32,6 +32,10 @@ Both classes are **hardware-independent**: no Arduino dependency, no dynamic mem
 - double precision internally — no float accumulation errors over days/weeks
 - millis() overflow-safe timestamp arithmetic
 
+### ExponentialAverage
+
+- Computes a single EMA over a stream of scalar samples.
+
 ---
 
 ## Requirements
@@ -94,7 +98,7 @@ lib_deps =
 
 ### Manual
 
-Copy `src/RollingStats.h` and `src/CumulativeStats.h` into your sketch folder.
+Copy `src/*.h` into your sketch folder.
 
 ---
 
@@ -246,6 +250,19 @@ dDose [µSv] = uSvH × Δt [h]
 ```
 
 Gaps between `addSample()` calls are **not** integrated — no data means no dose. This is the conservative and physically correct behaviour.
+
+## ExponentialAverage API
+
+### Methods
+
+|Method|Description|
+|---|---|
+|`addSample(float sample)`|Add a new sample and update the EMA.|
+|`value()`|Return the current EMA value.|
+|`isValid()`|Return true if at least one valid sample has been added.|
+|`alpha()`|Return the smoothing factor alpha.|
+|`setAlpha(float alpha)`|Change the smoothing factor and reset the EMA.|
+|`reset()`|Reset the EMA to the uninitialised state.|
 
 ---
 
