@@ -10,10 +10,10 @@ recent bins.
 
 ### Template parameters
 
-| Parameter | Type | Constraint | Description |
+|Parameter|Type|Constraint|Description|
 |---|---|---|---|
-| `BINS` | `uint32_t` | Power of 2, ≥ 2 | Number of bins in the circular buffer |
-| `RESOLUTION_S` | `uint32_t` | ≥ 1 | Width of each bin in seconds |
+|`BINS`|`uint32_t`|Power of 2, ≥ 2|Number of bins in the circular buffer|
+|`RESOLUTION_S`|`uint32_t`|≥ 1|Width of each bin in seconds|
 
 Maximum queryable window: `BINS × RESOLUTION_S` seconds.
 
@@ -52,6 +52,7 @@ stats.addSample(r.cpm, millis());
 ### Query — statistics
 
 All query functions accept a `windowSec` parameter:
+
 - Must be a **non-zero multiple of `RESOLUTION_S`** and ≤ `maxWindowSeconds()`.
 - Pass `0` to query all available history (up to `maxWindowSeconds()`).
 - Returns NaN if the window contains no valid bins.
@@ -155,11 +156,11 @@ No arguments. All accumulators initialised to zero / NaN.
 
 Add a new sample. Updates all accumulators.
 
-| Parameter | Description |
+|Parameter|Description|
 |---|---|
-| `cpm` | Count rate in counts per minute |
-| `uSvH` | Dose rate in µSv/h |
-| `timeMs` | Measurement timestamp in milliseconds (e.g. `millis()` or `r.timestampMs`) |
+|`cpm`|Count rate in counts per minute|
+|`uSvH`|Dose rate in µSv/h|
+|`timeMs`|Measurement timestamp in milliseconds (e.g. `millis()` or `r.timestampMs`)|
 
 **Dose integration:** dose is integrated from the second sample onwards using
 rectangular integration (`dDose = uSvH × Δt_hours`). Gaps between calls are
@@ -257,6 +258,7 @@ precision to prevent float accumulation errors over long measurement sessions
 
 Missing bins are stored as NaN and excluded from all query functions.
 This means:
+
 - Startup gaps do not pull the average down
 - Device sleep or tube fault periods do not distort statistics
 - `validSeconds()` reflects only genuinely measured time
@@ -273,13 +275,12 @@ interpretation ambiguous.
 Neither `RollingStats` nor `CumulativeStats` is thread-safe. `addSample()`
 performs multi-step floating-point calculations that are not atomic.
 
-| Context | Safe? | Notes |
+|Context|Safe?|Notes|
 |---|---|---|
-| Single Arduino `loop()` | ✓ | No locking needed |
-| Single FreeRTOS task | ✓ | No locking needed |
-| Two FreeRTOS tasks (ESP32) | ✗ | Wrap in `SemaphoreHandle_t` mutex |
-| ISR (`IRAM_ATTR`) | ✗ | Never — use `GeigerMeasurement::onPulse()` instead |
+|Single Arduino `loop()`|✓|No locking needed|
+|Single FreeRTOS task|✓|No locking needed|
+|Two FreeRTOS tasks (ESP32)|✗|Wrap in `SemaphoreHandle_t` mutex|
+|ISR (`IRAM_ATTR`)|✗|Never — use `GeigerMeasurement::onPulse()` instead|
 
 For multi-task use, the mutex must protect **all** calls — both `addSample()`
 and query functions (`average()`, `averageCpm()`, etc.).
-
