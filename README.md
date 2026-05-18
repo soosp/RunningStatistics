@@ -280,8 +280,9 @@ Gaps between `addSample()` calls are **not** integrated — no data means no dos
 
 |Sketch|Description|
 |---|---|
-|`TemperatureAverage`|Basic RollingStats usage with a temperature sensor|
-|`CumulativeStatsTest`|Validates CumulativeStats output against known reference values|
+|`TemperatureAverage.ino`|Basic RollingStats usage with a temperature sensor|
+|`CumulativeStatsTest.ino`|Validates CumulativeStats output against known reference values|
+|`ExponentialAverageDemo.ino`|Demonstrates ExponentialAverage with a synthetic sensor signal|
 
 ---
 
