@@ -239,6 +239,141 @@ starting a new dose period.
 
 ---
 
+## ExponentialAverage
+
+Single exponential moving average (EMA) for scalar time-series data.
+Useful for smoothing noisy sensor readings and detecting sustained changes
+by running two instances with different time constants in parallel.
+
+No Arduino dependency, no dynamic memory. All state fits in two floats (~8 bytes).
+
+### Constructor
+
+```cpp
+ExponentialAverage ema(float alpha = 0.1f);
+```
+
+|Parameter|Constraint|Description|
+|---|---|---|
+|`alpha`|`(0, 1]`|Smoothing factor. Invalid values are clamped to `0.1`.  High = fast response, low = heavy smoothing.|
+
+**Alpha selection:** For a desired time constant `tau` [s] at a fixed update
+interval `dt` [s]:
+
+```txt
+alpha = 1 - exp(-dt / tau)
+```
+
+Examples at 1 s update interval:
+
+|tau|alpha|Lag (approx.)|
+|---|---|---|
+|10 s|0.095|~10 samples|
+|30 s|0.033|~30 samples|
+|300 s|0.003|~300 samples|
+
+Note: `expf()` is not `constexpr` in most toolchains — compute alpha as a
+`const` (runtime initialised) rather than `constexpr`:
+
+```cpp
+const float ALPHA = 1.0f - expf(-1.0f / 30.0f);   // tau = 30 s, dt = 1 s
+ExponentialAverage ema(ALPHA);
+```
+
+---
+
+### Data input
+
+#### `void addSample(float sample)`
+
+Update the EMA with a new sample.
+
+- The **first** valid call initialises the EMA directly to `sample`,
+  avoiding slow convergence from zero.
+- NaN samples are **silently ignored** — the EMA retains its current value.
+
+---
+
+### Query
+
+#### `float value() const`
+
+Returns the current EMA value, or NaN if no valid sample has been added yet.
+
+Always check `isValid()` before use, or propagate NaN explicitly:
+
+```cpp
+if (ema.isValid())
+    Serial.printf("EMA: %.2f\n", ema.value());
+```
+
+#### `bool isValid() const`
+
+Returns `true` if at least one valid (non-NaN) sample has been added.
+
+#### `float alpha() const`
+
+Returns the current smoothing factor.
+
+---
+
+### Configuration
+
+#### `void setAlpha(float alpha)`
+
+Change the smoothing factor. The EMA is **reset** to the uninitialised state —
+the next `addSample()` call will re-initialise it directly to the new sample.
+
+Changing alpha while the EMA is running would produce history inconsistent
+with the new time constant, so the reset is intentional.
+
+Invalid values (`≤ 0`, `> 1`, NaN) are silently ignored.
+
+#### `void reset()`
+
+Reset to the uninitialised state. `isValid()` returns `false` until the next
+`addSample()` call.
+
+---
+
+### Typical use — dual EMA anomaly detection
+
+Running two instances with different time constants allows sustained changes
+to be distinguished from short-lived noise:
+
+```cpp
+// tau = 30 s (fast) and tau = 300 s (slow), updated once per second
+const float ALPHA_FAST = 1.0f - expf(-1.0f / 30.0f);
+const float ALPHA_SLOW = 1.0f - expf(-1.0f / 300.0f);
+
+ExponentialAverage emaFast(ALPHA_FAST);
+ExponentialAverage emaSlow(ALPHA_SLOW);
+
+// In loop():
+emaFast.addSample(reading);
+emaSlow.addSample(reading);
+
+if (emaFast.isValid() && emaSlow.isValid()) {
+    float trend = emaFast.value() - emaSlow.value();
+    // trend ≈ 0:    slow drift — both EMAs follow together
+    // trend >> 0:   sustained rise — emaFast responds, emaSlow lags
+    // large spike:  emaFast briefly rises, but not enough for a large trend
+}
+```
+
+See `ExponentialAverageDemo.ino` for a complete example with simulated sensor
+data, spike rejection, and alert detection.
+
+---
+
+### Thread safety
+
+`ExponentialAverage` is **not thread-safe**. If `addSample()` and `value()`
+are called from different tasks or from an ISR and the main loop, the caller
+is responsible for mutual exclusion.
+
+---
+
 ## Notes
 
 ### Welford's algorithm (CumulativeStats)

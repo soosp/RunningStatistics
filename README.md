@@ -257,12 +257,12 @@ Gaps between `addSample()` calls are **not** integrated — no data means no dos
 
 |Method|Description|
 |---|---|
-|`addSample(float sample)`|Add a new sample and update the EMA.|
-|`value()`|Return the current EMA value.|
-|`isValid()`|Return true if at least one valid sample has been added.|
-|`alpha()`|Return the smoothing factor alpha.|
-|`setAlpha(float alpha)`|Change the smoothing factor and reset the EMA.|
-|`reset()`|Reset the EMA to the uninitialised state.|
+|`addSample(float sample)`|Adds a new sample and update the EMA.|
+|`value()`|Returns the current EMA value, or NaN if no valid sample has been added yet.|
+|`isValid()`|Returns true if at least one valid (non-NaN) sample has been added.|
+|`alpha()`|Returns the smoothing factor alpha.|
+|`setAlpha(float alpha)`|Changes the smoothing factor and reset the EMA.|
+|`reset()`|Resets the EMA to the uninitialised state.|
 
 ---
 
