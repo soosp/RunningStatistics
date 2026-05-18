@@ -366,14 +366,6 @@ data, spike rejection, and alert detection.
 
 ---
 
-### Thread safety
-
-`ExponentialAverage` is **not thread-safe**. If `addSample()` and `value()`
-are called from different tasks or from an ISR and the main loop, the caller
-is responsible for mutual exclusion.
-
----
-
 ## Notes
 
 ### Welford's algorithm (CumulativeStats)
@@ -409,13 +401,14 @@ interpretation ambiguous.
 
 None of the classes in the library are thread-safe. `addSample()`
 performs multi-step floating-point calculations that are not atomic.
+If `addSample()` and `value()` are called from different tasks or from
+an ISR and the main loop, the caller is responsible for mutual exclusion.
+For multi-task use, the mutex must protect **all** calls — both `addSample()`
+and query functions (`average()`, `averageCpm()`, etc.).
 
 |Context|Safe?|Notes|
 |---|---|---|
 |Single Arduino `loop()`|✓|No locking needed|
 |Single FreeRTOS task|✓|No locking needed|
 |Two FreeRTOS tasks (ESP32)|✗|Wrap in `SemaphoreHandle_t` mutex|
-|ISR (`IRAM_ATTR`)|✗|Never — use `GeigerMeasurement::onPulse()` instead|
-
-For multi-task use, the mutex must protect **all** calls — both `addSample()`
-and query functions (`average()`, `averageCpm()`, etc.).
+|ISR (`IRAM_ATTR`)|✗|Never — use `GeigerMeasurement::onPulse()` instead in GM counters|
