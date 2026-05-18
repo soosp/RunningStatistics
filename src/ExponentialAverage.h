@@ -109,9 +109,8 @@ public:
      */
     explicit ExponentialAverage(float alpha = 0.1f)
         : _alpha(alpha > 0.0f && alpha <= 1.0f ? alpha : 0.1f)
-        , _value(-1.0f)
+        , _value(NAN)
     {}
-
     // =========================================================================
     // CORE API
     // =========================================================================
@@ -128,25 +127,22 @@ public:
      */
     void addSample(float sample) {
         if (isnan(sample)) return;
-        if (_value < 0.0f) {
-            _value = sample;
-        } else {
-            _value += _alpha * (sample - _value);
-        }
+        if (isnan(_value)) _value = sample;
+        else               _value += _alpha * (sample - _value);
     }
 
     /**
      * @brief Return the current EMA value.
      *
-     * Returns 0.0 if no valid sample has been added yet. Check isValid()
+     * Returns NaN if no valid sample has been added yet. Check isValid()
      * before using this value if startup behaviour matters.
      */
-    float value() const { return (_value >= 0.0f) ? _value : 0.0f; }
+    float value()   const { return _value; }
 
     /**
      * @brief Return true if at least one valid sample has been added.
      */
-    bool isValid() const { return _value >= 0.0f; }
+    bool  isValid() const { return !isnan(_value); }
 
     /**
      * @brief Return the smoothing factor alpha.
@@ -165,7 +161,7 @@ public:
     void setAlpha(float alpha) {
         if (alpha <= 0.0f || alpha > 1.0f || isnan(alpha)) return;
         _alpha = alpha;
-        _value = -1.0f;
+        _value = NAN;
     }
 
     /**
@@ -174,9 +170,9 @@ public:
      * The next addSample() call will re-initialise the EMA directly to
      * the new sample value.
      */
-    void reset() { _value = -1.0f; }
+    void reset() { _value = NAN; }
 
 private:
     float _alpha;  ///< Smoothing factor in (0, 1]
-    float _value;  ///< Current EMA value, or -1.0 if uninitialised
+    float _value;  ///< Current EMA value, or NaN if uninitialised
 };
