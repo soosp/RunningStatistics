@@ -407,7 +407,7 @@ interpretation ambiguous.
 
 ### Thread safety
 
-Neither `RollingStats` nor `CumulativeStats` is thread-safe. `addSample()`
+None of the classes in the library are thread-safe. `addSample()`
 performs multi-step floating-point calculations that are not atomic.
 
 |Context|Safe?|Notes|
