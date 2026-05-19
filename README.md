@@ -77,7 +77,7 @@ take more cycles per `addSample()` call.
 
 > **Note:** `GeigerMeasurement` (the companion GM tube library) is
 > ESP8266/ESP32-specific due to its ISR and platform abstractions.
-> `RunningStats` is deliberately kept platform-independent so it can be
+> `RunningStatistics` is deliberately kept platform-independent so it can be
 > used with any sensor on any hardware — not just Geiger counters on ESP.
 
 ---
@@ -93,7 +93,7 @@ take more cycles per `addSample()` call.
 
 ```ini
 lib_deps =
-    https://github.com/soosp/RunningStats
+    https://github.com/soosp/RunningStatistics
 ```
 
 ### Manual
