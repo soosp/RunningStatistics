@@ -10,5 +10,5 @@ All notable changes to this project will be documented in this file.
 
 - First public release
 
-[unreleased]: https://github.com/soosp/RunningStats/compare/1.0.0...HEAD
-[1.0.0]: https://github.com/soosp/RunningStats/releases/tag/1.0.0
+[unreleased]: https://github.com/soosp/RunningStatistics/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/soosp/RunningStatistics/releases/tag/1.0.0

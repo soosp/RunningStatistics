@@ -1,4 +1,4 @@
-# RunningStats — API Reference
+# RunningStatistics — API Reference
 
 ---
 
