@@ -1,5 +1,5 @@
 {
-  "name": "RunningStats",
+  "name": "RunningStatistics",
   "version": "1.0.0",
   "description": "General-purpose sliding window and cumulative statistics for time-series data on embedded systems. RollingStats provides bin-based sliding window statistics with compile-time sizing and no dynamic memory allocation. CumulativeStats provides lifetime statistics and dose accumulation using Welford's numerically stable algorithm.",
   "keywords": "statistics, sliding window, rolling average, cumulative, time series, sensor, embedded",
@@ -12,11 +12,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/soosp/RunningStats"
+    "url": "https://github.com/soosp/RunningStatistics"
   },
-  "homepage": "https://github.com/soosp/RunningStats",
+  "homepage": "https://github.com/soosp/RunningStatistics",
   "license": "MIT",
   "frameworks": "arduino",
   "platforms": "*",
-  "headers": ["RollingStats.h", "CumulativeStats.h"]
+  "headers": ["RunningStatistics.h", "RollingStats.h", "CumulativeStats.h", "ExponentialAverage.h"]
 }

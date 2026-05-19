@@ -1,4 +1,4 @@
-# RunningStats
+# RunningStatistics
 
 A general-purpose time-series statistics library for Arduino and embedded systems (ESP32, ESP8266, and any platform with a C++ compiler).
 
