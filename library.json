@@ -1,6 +1,6 @@
 {
   "name": "RunningStatistics",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "General-purpose sliding window and cumulative statistics for time-series data on embedded systems. RollingStats provides bin-based sliding window statistics with compile-time sizing and no dynamic memory allocation. CumulativeStats provides lifetime statistics and dose accumulation using Welford's numerically stable algorithm.",
   "keywords": "statistics, sliding window, rolling average, cumulative, time series, sensor, embedded",
   "authors": [
