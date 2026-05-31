@@ -286,11 +286,15 @@ ExponentialAverage ema(ALPHA);
 
 #### `void addSample(float sample)`
 
-Update the EMA with a new sample.
+Update the EMA with a new sample using the stored alpha.
+The first valid call initialises the EMA directly to `sample`.
+NaN samples are silently ignored.
 
-- The **first** valid call initialises the EMA directly to `sample`,
-  avoiding slow convergence from zero.
-- NaN samples are **silently ignored** — the EMA retains its current value.
+#### `void addSample(float sample, float alpha)`
+
+Applies a single EMA step with the given alpha instead of the stored alpha.
+Use when the sampling interval varies — compute the actual elapsed time and
+derive alpha from it, without permanently changing the stored smoothing factor.
 
 ---
 

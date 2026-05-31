@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- ExponentialAverage.h:
+  - New `addSample` overload function to add a new sample using a one-shot alpha.
+
 ## [1.0.1] - 2026-05-19
 
 ### Changed

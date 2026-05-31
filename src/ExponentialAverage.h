@@ -116,19 +116,34 @@ public:
     // =========================================================================
 
     /**
-     * @brief Add a new sample and update the EMA.
+     * @brief Add a new sample with the stored alpha and update the EMA.
+     * 
+     * @param sample  New measurement value.
+     */
+    void addSample(float sample) {
+        addSample(sample, _alpha);
+    }
+
+    /**
+     * @brief Add a new sample using a one-shot alpha (time-corrected update).
+     *
+     * Applies a single EMA step with the given alpha instead of the stored
+     * _alpha. Use when the sampling interval varies — compute the actual
+     * elapsed time and derive alpha from it, without permanently changing
+     * the stored smoothing factor.
      *
      * The first valid (non-NaN) call initialises the EMA directly to the
      * sample value, avoiding slow convergence from zero.
      *
-     * NaN samples are silently ignored — the EMA retains its current value.
+     * NaN samples and invalid alpha values are silently ignored.
      *
      * @param sample  New measurement value.
+     * @param alpha   One-shot smoothing factor in (0, 1].
      */
-    void addSample(float sample) {
-        if (isnan(sample)) return;
+    void addSample(float sample, float alpha) {
+        if (isnan(sample) || alpha <= 0.0f || alpha > 1.0f || isnan(alpha)) return;
         if (isnan(_value)) _value = sample;
-        else               _value += _alpha * (sample - _value);
+        else               _value += alpha * (sample - _value);
     }
 
     /**
