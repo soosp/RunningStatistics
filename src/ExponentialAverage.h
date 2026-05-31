@@ -165,6 +165,20 @@ public:
     float alpha() const { return _alpha; }
 
     /**
+     * @brief Compute the EMA smoothing factor alpha for a given sample interval
+     *        and time constant.
+     *
+     *   alpha = 1 - exp(-dt / tau)
+     *
+     * @param dtSeconds    Sampling interval in seconds.
+     * @param tauSeconds   Desired time constant in seconds.
+     * @return             Smoothing factor alpha in (0, 1].
+     */
+    static float computeAlpha(float dtSeconds, float tauSeconds) {
+        return 1.0f - expf(-dtSeconds / tauSeconds);
+    }
+
+    /**
      * @brief Change the smoothing factor and reset the EMA.
      *
      * Changing alpha while the EMA is running would produce inconsistent

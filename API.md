@@ -323,6 +323,11 @@ Returns the current smoothing factor.
 
 ### Configuration
 
+#### `static float computeAlpha(float dtSeconds, float tauSeconds)`
+
+Compute the EMA smoothing factor alpha for a given sample interval and time
+constant.
+
 #### `void setAlpha(float alpha)`
 
 Change the smoothing factor. The EMA is **reset** to the uninitialised state —

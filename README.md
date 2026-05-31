@@ -261,7 +261,8 @@ Gaps between `addSample()` calls are **not** integrated — no data means no dos
 |`addSample(float sample, float alpha)`|Applies a single EMA step with the given alpha instead of the stored alpha.|
 |`value()`|Returns the current EMA value, or NaN if no valid sample has been added yet.|
 |`isValid()`|Returns true if at least one valid (non-NaN) sample has been added.|
-|`alpha()`|Returns the smoothing factor alpha.|
+|`alpha()`|Returns the stored smoothing factor alpha.|
+|`computeAlpha(float dtSeconds, float tauSeconds)`|Compute the EMA smoothing factor alpha for a given sample interval and time constant.|
 |`setAlpha(float alpha)`|Changes the smoothing factor and reset the EMA.|
 |`reset()`|Resets the EMA to the uninitialised state.|
 
