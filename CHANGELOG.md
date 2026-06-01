@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Add ExponetialAverage example code to the README.md
+
 ## [1.1.0] - 2026-05-31
 
 ### Added

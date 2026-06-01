@@ -8,6 +8,7 @@ The library provides two complementary classes:
 |---|---|
 |`RollingStats`|Sliding window statistics — last N minutes/hours of data|
 |`CumulativeStats`|Lifetime statistics — all data since startup, never discarded|
+|`ExponentialAverage`|Computes a single Exponential Moving Average (EMA) over a stream of scalar samples.|
 
 Both classes are **hardware-independent**: no Arduino dependency, no dynamic memory allocation, no global state. The caller provides the timestamp.
 
@@ -174,6 +175,38 @@ void loop() {
         Serial.printf("1h avg: %.1f CPM  Total dose: %.4f µSv\n",
                       stats.average(3600),
                       lifetime.totalDoseUSv());
+}
+```
+
+### ExponentialAverage
+
+```cpp
+#include <Arduino.h>
+#include <ExponentialAverage.h>
+
+ExponentialAverage ema(0.10f);
+unsigned long last, now;
+
+void setup() {
+    last = millis();
+}
+
+void loop() {
+    float value;
+    now = millis();
+
+    // get value here, e.g.:
+    value = readSensor();
+
+    // update once per second
+    if (now - last > 1000) {
+        ema.addSample(value);
+
+        if (ema.isValid()) {
+            Serial.printf("EMA: %.1f\n", ema.value());
+        }
+      last = now;
+    }
 }
 ```
 
