@@ -87,6 +87,12 @@ take more cycles per `addSample()` call.
 
 ### Arduino IDE
 
+**Install via Library Manager:**
+
+Search for `HttpDigestAuth` in the Library Manager (Sketch → Include Library → Manage Libraries).
+
+**Install manually:**
+
 1. Download this repository as a ZIP file
 2. In Arduino IDE: **Sketch → Include Library → Add .ZIP Library**
 
@@ -94,7 +100,7 @@ take more cycles per `addSample()` call.
 
 ```ini
 lib_deps =
-    https://github.com/soosp/RunningStatistics
+    soosp/RunningStatistics
 ```
 
 ### Manual
