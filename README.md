@@ -323,8 +323,8 @@ Gaps between `addSample()` calls are **not** integrated — no data means no dos
 
 ## Thread safety
 
-`RollingStats` and `CumulativeStats` are **not thread-safe**. They contain no
-internal locking mechanism, by design:
+These libraries are **not thread-safe**. They contain no internal locking
+mechanism, by design:
 
 - Both classes perform multi-step floating-point calculations in `addSample()`
   that are not atomic — concurrent access from multiple contexts will corrupt

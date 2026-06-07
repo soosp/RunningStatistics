@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Minor fix in `README.md`
 - Add ExponetialAverage example code to the README.md
 
 ## [1.1.0] - 2026-05-31
