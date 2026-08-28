@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- `RollingStats::addSample()` caps the bin-commit loop at `BINS` iterations.
+  Committing more bins than the ring holds only rewrites the same slots, so the
+  end state is unchanged, but an out-of-order timestamp — an uninitialised or
+  stale value from the caller — underflows the unsigned elapsed-time
+  subtraction into a ~49-day gap and previously spun the loop tens of thousands
+  of times before arriving there. When the cap is reached the bin start time is
+  moved to where the uncapped loop would have left it — subtracting whole bins
+  never changes the elapsed time modulo the bin duration — so the end state is
+  identical and only the iteration count differs. Without that step every later
+  call would commit another `BINS` bins.
+
 ### Added
 
 - Minor fix in `README.md`

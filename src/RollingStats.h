@@ -254,7 +254,16 @@ public:
         // Close completed bins and open new ones.
         // The while loop handles the case where multiple bins have elapsed
         // (e.g. after a sleep or measurement gap). Intermediate bins get NaN.
-        while (elapsedMs >= RESOLUTION_S * 1000UL) {
+        //
+        // The iteration count is capped at BINS: committing more bins than the
+        // ring holds only overwrites the same slots again, so the result is
+        // identical while the cost stops growing with the gap. Without the cap,
+        // a timestamp that moves backwards — an uninitialised or stale value
+        // from the caller — underflows the unsigned subtraction above into a
+        // gap of ~49 days and spins the loop for tens of thousands of
+        // iterations before reaching the same end state.
+        uint32_t guard = BINS;
+        while (elapsedMs >= RESOLUTION_S * 1000UL && guard-- > 0) {
             _commitBin();
             // Advance the bin start time by exactly one bin duration.
             // We ADD rather than setting to timeMs to avoid drift: small
@@ -262,6 +271,16 @@ public:
             // and shift bin boundaries unpredictably over time.
             _accumStartMs += RESOLUTION_S * 1000UL;
             elapsedMs     -= RESOLUTION_S * 1000UL;
+        }
+
+        // If the cap stopped the loop, the bin start time is still far behind,
+        // and every later call would commit another BINS bins. Move it to where
+        // the uncapped loop would have left it: subtracting whole bins never
+        // changes elapsedMs modulo the bin duration, so this lands on the same
+        // grid the += above maintains, and the end state is identical — only
+        // the iteration count differs.
+        if (elapsedMs >= RESOLUTION_S * 1000UL) {
+            _accumStartMs = timeMs - (elapsedMs % (RESOLUTION_S * 1000UL));
         }
 
         // Accumulate this sample into the current (open) bin
