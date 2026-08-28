@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-08-28
+
 ### Fixed
 
 - `RollingStats::addSample()` caps the bin-commit loop at `BINS` iterations.
@@ -42,7 +44,8 @@ All notable changes to this project will be documented in this file.
 
 - First public release
 
-[unreleased]: https://github.com/soosp/RunningStatistics/compare/1.1.0...HEAD
+[unreleased]: https://github.com/soosp/RunningStatistics/compare/1.1.1...HEAD
+[1.1.1]: https://github.com/soosp/RunningStatistics/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/soosp/RunningStatistics/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/soosp/RunningStatistics/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/soosp/RunningStatistics/releases/tag/1.0.0
